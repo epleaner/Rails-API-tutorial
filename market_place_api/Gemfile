@@ -42,3 +42,12 @@ group :development, :test do
   gem 'spring'
 end
 
+group :test do
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  gem 'ffaker'
+  gem 'shoulda-matchers', '~>2.8.0'
+end
+
+gem 'devise', '~> 3.4.0'
+
