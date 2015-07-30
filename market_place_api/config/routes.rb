@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
       resources :sessions, :only => [:create]
       delete '/sessions/:auth_token', to: 'sessions#destroy'
+
+      resources :products, :only => [:show, :index, :create, :update, :destroy]
     end
   end
 end

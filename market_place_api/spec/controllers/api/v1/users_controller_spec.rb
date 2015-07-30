@@ -103,16 +103,14 @@ describe Api::V1::UsersController do
     context 'authorized request' do
       before(:each) do
         api_authorization_header @user.auth_token
+        delete :destroy, { id: @user.id}
       end
 
       it 'deletes the user from the database' do
-        expect{
-          delete :destroy, { id: @user.id}
-        }.to change(User, :count).by(-1)
+        expect{ User.find(@user.id) }.to raise_error ActiveRecord::RecordNotFound
       end
 
       it 'responds with 204' do
-        delete :destroy, { id: @user.id}
         expect(response.status).to eql(204)
       end
     end
