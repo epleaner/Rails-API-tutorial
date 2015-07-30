@@ -5,11 +5,11 @@ describe Api::V1::UsersController do
   describe 'GET #show' do
     before(:each) do
       @user = FactoryGirl.create :user
-      get :show, id: @user.id, format: :json
+      get :show, id: @user.id
     end
 
     it 'returns the information about a reporter on a hash' do
-      user_response = json_response
+      user_response = json_response[:user]
       expect(user_response[:email]).to eq @user.email
     end
 
@@ -24,7 +24,7 @@ describe Api::V1::UsersController do
       end
 
       it 'renders the json representation for the newly created user record' do
-        user_response = json_response
+        user_response = json_response[:user]
         expect(user_response[:email]).to eq @user_attributes[:email]
       end
 
@@ -63,7 +63,7 @@ describe Api::V1::UsersController do
         end
 
         it 'renders the json representation for the updated user' do
-          user_response = json_response
+          user_response = json_response[:user]
           expect(user_response[:email]).to eql 'new@email.com'
         end
 
