@@ -13,6 +13,10 @@ describe Api::V1::UsersController do
       expect(user_response[:email]).to eq @user.email
     end
 
+    it 'has the product ids as an embedded object' do
+      expect(json_response[:user][:product_ids]).to eql []
+    end
+
     it { should respond_with 200 }
   end
 

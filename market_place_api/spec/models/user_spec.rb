@@ -19,6 +19,7 @@ describe User do
   it { should be_valid }
 
   it { should have_many(:products)}
+  it { should have_many(:orders) }
 
   describe 'when email is not present' do
     before { @user.email = ''}
@@ -63,6 +64,18 @@ describe User do
       products.each do |product|
         expect{ Product.find(product) }.to raise_error ActiveRecord::RecordNotFound
       end
+    end
+  end
+
+  describe '#orders association' do
+    before do
+      @user.save
+      @order = FactoryGirl.create :order, user: @user
+    end
+
+    it 'destroys the order on user destroy' do
+      @user.destroy
+      expect { Order.find(@order.id) }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end

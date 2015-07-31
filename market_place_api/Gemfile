@@ -24,6 +24,9 @@ gem 'active_model_serializers'
 
 gem 'devise', '~> 3.4.0'
 
+gem 'kaminari'
+
+gem 'delayed_job_active_record'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -50,4 +53,5 @@ end
 group :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers', '~>2.8.0'
+  gem 'email_spec'
 end

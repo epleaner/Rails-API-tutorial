@@ -1,0 +1,29 @@
+require 'rails_helper'
+
+RSpec.describe Placement, type: :model do
+  let(:placement) { FactoryGirl.build :placement }
+  subject { placement }
+
+  it { should respond_to :order_id }
+  it { should respond_to :product_id }
+  it { should respond_to :quantity}
+
+  it { should belong_to :order }
+  it { should belong_to :product }
+
+  describe '@decrement_product_quantity!' do
+    it 'decreases the product quantity by the placement quantity' do
+      product = placement.product
+      expect{ placement.decrement_product_quantity! }.to change{ product.quantity }.by(-placement.quantity)
+    end
+  end
+
+  describe 'after_create' do
+    it 'calls @decrement_product_quantity!' do
+      placement1 = FactoryGirl.build :placement
+      expect(placement1).to receive(:decrement_product_quantity!)
+      placement1.save
+    end
+  end
+
+end

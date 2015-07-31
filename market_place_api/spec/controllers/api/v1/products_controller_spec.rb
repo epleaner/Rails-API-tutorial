@@ -9,7 +9,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       end
 
       it 'returns the info about a product on a hash' do
-        expect(json_response[:title]).to eql @product.title
+        expect(json_response[:product][:title]).to eql @product.title
+      end
+
+      it 'has the user as an embedded object' do
+        expect(json_response[:product][:user][:email]).to eql @product.user.email
       end
 
       it { should respond_with 200 }
@@ -30,11 +34,41 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       get :index
     end
 
-    it 'returns 4 records from the database' do
-      expect(json_response[:products].length).to be 4
+    context 'when product_ids are not passed in' do
+      before :each do
+        get :index
+      end
+
+      it 'returns 4 records from the database' do
+        expect(json_response[:products].length).to be 4
+      end
+
+      it 'returns the user objects embedded in each product' do
+        json_response[:products].each do |product_response|
+          expect(product_response[:user]). to be_present
+        end
+      end
+
+      it { should respond_with 200 }
     end
 
-    it { should respond_with 200 }
+    context 'when product_ids are passed in' do
+      before :each do
+        @user = FactoryGirl.create :user
+        3.times { FactoryGirl.create :product, user: @user }
+        get :index, product_ids: @user.product_ids
+      end
+
+      it 'returns just those products' do
+        json_response[:products].each do |product_response|
+          expect(product_response[:user][:email]).to eql @user.email
+        end
+      end
+
+      it { should respond_with 200 }
+    end
+
+    it_behaves_like 'paginated list'
   end
 
   describe 'POST #create' do
@@ -54,7 +88,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         end
 
         it 'renders the json representation for the product record just created' do
-          expect(json_response[:title]).to eql @product_attributes[:title]
+          expect(json_response[:product][:title]).to eql @product_attributes[:title]
         end
 
         it { should respond_with 201 }
@@ -102,7 +136,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         end
 
         it 'renders the json representation for the updated user' do
-          expect(json_response[:title]).to eql 'Updated product'
+          expect(json_response[:product][:title]).to eql 'Updated product'
         end
 
         it { should respond_with 200 }

@@ -9,7 +9,9 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def index
-    respond_with Product.all
+    products = Product.search(search_params.symbolize_keys).page(params[:page]).per(params[:per_page])
+
+    render json: products, meta: pagination(products, params[:per_page])
   end
 
   def create
@@ -42,6 +44,10 @@ class Api::V1::ProductsController < ApplicationController
 
   def product_params
     params.require(:product).permit(:title, :price, :published)
+  end
+
+  def search_params
+    params.permit(:keyword, :min_price, :max_price, :product_ids => [])
   end
 
   def check_for_user_product
